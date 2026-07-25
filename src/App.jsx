@@ -54,7 +54,7 @@ function AppShell() {
         </label>
 
         {isAuthenticated ? (
-          <>
+          <div className="nav-utilities">
             <details className="utility-panel">
               <summary>{t('Cart')} ({cart.length})</summary>
               {cart.length === 0 ? (
@@ -90,16 +90,7 @@ function AppShell() {
                 ))
               )}
             </details>
-
-            <details className="utility-panel account-panel">
-              <summary>{user.name.split(' ')[0]}</summary>
-              <p><strong>{user.name}</strong></p>
-              <p>{user.email}</p>
-              <button type="button" className="reset-button" onClick={logout}>
-                {t('Log out')}
-              </button>
-            </details>
-          </>
+          </div>
         ) : (
           <div className="auth-nav">
             <Link to="/login" className="nav-auth-link">{t('Log in')}</Link>
@@ -109,16 +100,32 @@ function AppShell() {
       </nav>
 
       {isAuthenticated && (
-        <section className="profile-strip" aria-label="Profile summary">
-          <article className="mini-profile">
+        <details className="account-menu">
+          <summary
+            className="account-avatar"
+            aria-label={t('Account')}
+            title={user.name}
+          >
+            {user.name
+              .split(' ')
+              .filter(Boolean)
+              .slice(0, 2)
+              .map((part) => part[0]?.toUpperCase())
+              .join('')}
+          </summary>
+          <div className="account-panel">
             <strong>{user.name}</strong>
-            <span>{user.city} | {user.languagesSpoken}</span>
-            <div>
+            <p>{user.email}</p>
+            <p>{user.city} | {user.languagesSpoken}</p>
+            <div className="account-badges">
               <span>{user.rating} {t('rating')}</span>
               <span>{user.verified ? t('Verified seller') : t('New member')}</span>
             </div>
-          </article>
-        </section>
+            <button type="button" className="reset-button" onClick={logout}>
+              {t('Log out')}
+            </button>
+          </div>
+        </details>
       )}
 
       <main className="page">
