@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './auth/AuthContext.jsx'
 import LandingPage from './LandingPage.jsx'
 import TradePage from './TradePage.jsx'
 import FoodPage from './FoodPage.jsx'
+import ServicesPage from './ServicesPage.jsx'
 import { FoodDetailPage, TradeDetailPage } from './ProductDetailPage.jsx'
 import RecipesPage from './RecipesPage.jsx'
 import ChatPage from './ChatPage.jsx'
@@ -371,6 +372,7 @@ function AppShell() {
         <div className="nav-links">
           <NavLink to="/trade">{t('Marketplace')}</NavLink>
           <NavLink to="/food">{t('Food Bazaar')}</NavLink>
+          <NavLink to="/services">{t('Services')}</NavLink>
           <NavLink to="/chat">{t('Community Chat')}</NavLink>
         </div>
         <label className="language-picker">
@@ -440,6 +442,7 @@ function AppShell() {
           <Route path="/food" element={<FoodPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
           <Route path="/food/:id" element={<FoodDetailPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
           <Route path="/food/recipes" element={<RecipesPage t={t} />} />
+          <Route path="/services" element={<ServicesPage t={t} addMessage={addMessage} addNotification={addNotification} />} />
           <Route path="/chat" element={<ChatPage t={t} addNotification={addNotification} />} />
         </Routes>
       </main>

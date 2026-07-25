@@ -36,7 +36,7 @@ export default function LandingPage({ t }) {
 
       <section className="lp-section lp-paths">
         <div className="lp-section-copy">
-          <h2>{t('Three doors into community')}</h2>
+          <h2>{t('Four doors into community')}</h2>
           <p>{t('Start where you feel most at home today.')}</p>
         </div>
 
@@ -59,8 +59,17 @@ export default function LandingPage({ t }) {
             <span className="lp-path-go">{t('Taste')}</span>
           </Link>
 
-          <Link to="/chat" className="lp-path">
+          <Link to="/services" className="lp-path">
             <span className="lp-path-index">03</span>
+            <span className="lp-path-body">
+              <strong>{t('Services')}</strong>
+              <span>{t('Find tailoring, mehendi, beauty, catering, and local help.')}</span>
+            </span>
+            <span className="lp-path-go">{t('Find')}</span>
+          </Link>
+
+          <Link to="/chat" className="lp-path">
+            <span className="lp-path-index">04</span>
             <span className="lp-path-body">
               <strong>{t('Community')}</strong>
               <span>{t('Ask questions, share advice, and find your people.')}</span>
