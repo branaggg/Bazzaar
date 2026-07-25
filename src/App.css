@@ -519,7 +519,8 @@ h1 {
   margin-top: 1rem;
 }
 
-.product-actions button {
+.product-actions button,
+.detail-link {
   font-size: 0.9rem;
   min-height: 42px;
   padding: 0.6rem 0.7rem;
@@ -542,6 +543,22 @@ h1 {
 
 .product-actions .buy-button:hover {
   background: #9f1239;
+}
+
+.detail-link {
+  align-items: center;
+  background: #f5f5f4;
+  border-radius: 999px;
+  color: #44403c;
+  display: inline-flex;
+  font-weight: 800;
+  grid-column: 1 / -1;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.detail-link:hover {
+  background: #e7e5e4;
 }
 
 .empty-state {
@@ -896,6 +913,127 @@ h1 {
 
 .food-actions .save-food-button:hover {
   background: #fed7aa;
+}
+
+.detail-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.back-link {
+  color: #9f1239;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.detail-layout {
+  align-items: start;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.05fr);
+}
+
+.detail-photo {
+  align-items: center;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, #fda4af, #fed7aa 55%, #fde68a);
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(120, 53, 15, 0.12);
+  color: #fff;
+  display: flex;
+  font-size: clamp(5rem, 14vw, 9rem);
+  font-weight: 900;
+  justify-content: center;
+  min-height: 320px;
+}
+
+.detail-info {
+  background: #fff;
+  border: 1px solid rgba(120, 53, 15, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(120, 53, 15, 0.1);
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.detail-info h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  margin-bottom: 0;
+}
+
+.detail-price {
+  color: #be123c;
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 0;
+}
+
+.seller-panel {
+  align-items: center;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  padding: 1rem;
+}
+
+.seller-panel h2,
+.seller-panel p {
+  margin-bottom: 0;
+}
+
+.seller-panel span,
+.seller-panel strong {
+  background: #fff;
+  border-radius: 999px;
+  color: #9a3412;
+  font-size: 0.86rem;
+  padding: 0.4rem 0.7rem;
+  white-space: nowrap;
+}
+
+.detail-list {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.detail-list div {
+  background: #fafaf9;
+  border-radius: 8px;
+  padding: 0.8rem;
+}
+
+.detail-list dt {
+  color: #78716c;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.detail-list dd {
+  color: #292524;
+  font-weight: 800;
+  margin: 0.2rem 0 0;
+}
+
+.detail-actions {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.detail-actions button {
+  min-height: 48px;
 }
 
 .spotlight-grid {
@@ -1579,7 +1717,11 @@ h1 {
   .food-card-grid,
   .spotlight-grid,
   .bazaar-grid,
-  .recipe-grid {
+  .recipe-grid,
+  .detail-layout,
+  .detail-list,
+  .seller-panel,
+  .detail-actions {
     grid-template-columns: 1fr;
   }
 

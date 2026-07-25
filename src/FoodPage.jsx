@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { useRequireAuth } from './auth/useRequireAuth.js'
 
-const foodItems = [
+export const foodItems = [
   { id: 1, title: 'Homemade Mango Pickle', vendor: "Aunty's Kitchen", category: 'Pickles', diet: 'Vegetarian', method: 'Pickup', price: 12, rating: 4.9, distance: 1.8, ready: 'Today', saved: false },
   { id: 2, title: 'Premium Saffron Threads', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegetarian', method: 'Shipping', price: 30, rating: 4.8, distance: 6.4, ready: 'Ships Tomorrow', saved: false },
   { id: 3, title: 'Fresh Mathri Box', vendor: 'Delhi Delights', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 15, rating: 4.7, distance: 3.2, ready: 'Today', saved: false },
@@ -166,6 +166,7 @@ export default function FoodPage({ t, addToCart, addNotification }) {
                   >
                     {t('Reserve')}
                   </button>
+                  <Link to={`/food/${item.id}`} className="detail-link">{t('View Details')}</Link>
                 </div>
               </article>
             ))}

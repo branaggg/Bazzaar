@@ -1,8 +1,9 @@
+import { Link } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { useAuth } from './auth/AuthContext.jsx'
 import { useRequireAuth } from './auth/useRequireAuth.js'
 
-const items = [
+export const tradeItems = [
   {
     id: 1,
     name: 'Banarasi Silk Saree',
@@ -195,7 +196,7 @@ const locations = ['Any Location', 'San Jose', 'Fremont', 'Sunnyvale', 'Cupertin
 export default function TradePage({ t, addToCart, addMessage, addNotification }) {
   const { user } = useAuth()
   const requireAuth = useRequireAuth()
-  const [marketItems, setMarketItems] = useState(items)
+  const [marketItems, setMarketItems] = useState(tradeItems)
   const [listingOpen, setListingOpen] = useState(false)
   const [tradeTarget, setTradeTarget] = useState(null)
   const [listing, setListing] = useState({
@@ -419,6 +420,7 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
                   >
                     {t('Buy')}
                   </button>
+                  <Link to={`/trade/${item.id}`} className="detail-link">{t('View Details')}</Link>
                 </div>
               </div>
             </article>

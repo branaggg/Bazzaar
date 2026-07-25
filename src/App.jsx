@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './auth/AuthContext.jsx'
 import LandingPage from './LandingPage.jsx'
 import TradePage from './TradePage.jsx'
 import FoodPage from './FoodPage.jsx'
+import { FoodDetailPage, TradeDetailPage } from './ProductDetailPage.jsx'
 import RecipesPage from './RecipesPage.jsx'
 import ChatPage from './ChatPage.jsx'
 import LoginPage from './LoginPage.jsx'
@@ -126,7 +127,9 @@ function AppShell() {
           <Route path="/login" element={<LoginPage t={t} />} />
           <Route path="/signup" element={<SignupPage t={t} />} />
           <Route path="/trade" element={<TradePage t={t} addToCart={addToCart} addMessage={addMessage} addNotification={addNotification} />} />
+          <Route path="/trade/:id" element={<TradeDetailPage t={t} addToCart={addToCart} addMessage={addMessage} addNotification={addNotification} />} />
           <Route path="/food" element={<FoodPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
+          <Route path="/food/:id" element={<FoodDetailPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
           <Route path="/food/recipes" element={<RecipesPage t={t} />} />
           <Route path="/chat" element={<ChatPage t={t} addNotification={addNotification} />} />
         </Routes>
