@@ -1,9 +1,11 @@
 import { Link, useParams } from 'react-router-dom'
+import { useRequireAuth } from './auth/useRequireAuth.js'
 import { foodItems } from './FoodPage.jsx'
 import { tradeItems } from './TradePage.jsx'
 
 export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
   const { id } = useParams()
+  const requireAuth = useRequireAuth()
   const item = tradeItems.find((product) => product.id === Number(id))
 
   if (!item) return <MissingProduct t={t} backTo="/trade" />
@@ -17,7 +19,7 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
   }
 
   return (
-    <ProductShell
+      <ProductShell
       t={t}
       backTo="/trade"
       backLabel="Back to Marketplace"
@@ -25,9 +27,11 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
       eyebrow={item.category}
       title={item.name}
       price={item.price}
+      sellerLabel="Seller"
       seller={item.seller}
       rating={item.rating}
       badge={item.badge}
+      description={`${item.style} ${item.category} for ${item.occasion.toLowerCase()} wear. Listed in ${item.condition.toLowerCase()} condition with local pickup options in ${item.location}.`}
       details={[
         ['Condition', item.condition],
         ['Style', item.style],
@@ -37,8 +41,9 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
       ]}
       ctas={
         <>
-          <button type="button" className="trade-button" onClick={sendTradeOffer}>{t('Offer Trade')}</button>
-          <button type="button" className="buy-button" onClick={() => addToCart?.(item)}>{t('Buy')}</button>
+          <button type="button" className="trade-button" onClick={() => requireAuth(sendTradeOffer)}>{t('Offer Trade')}</button>
+          <button type="button" className="buy-button" onClick={() => requireAuth(() => addToCart?.(item))}>{t('Buy')}</button>
+          <button type="button" className="message-button" onClick={() => requireAuth(() => addMessage?.({ from: item.seller, text: `Message started about ${item.name}.` }))}>{t('Message Seller')}</button>
         </>
       }
     />
@@ -47,6 +52,7 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
 
 export function FoodDetailPage({ t, addToCart, addNotification }) {
   const { id } = useParams()
+  const requireAuth = useRequireAuth()
   const item = foodItems.find((product) => product.id === Number(id))
 
   if (!item) return <MissingProduct t={t} backTo="/food" />
@@ -65,9 +71,11 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
       eyebrow={item.category}
       title={item.title}
       price={item.price}
+      sellerLabel="Vendor"
       seller={item.vendor}
       rating={item.rating}
       badge={item.method}
+      description={`${item.title} from ${item.vendor}. Available by ${item.method.toLowerCase()} and marked ${item.ready.toLowerCase()}.`}
       details={[
         ['Diet', item.diet],
         ['Method', item.method],
@@ -77,32 +85,40 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
       ]}
       ctas={
         <>
-          <button type="button" className="save-food-button">{t(item.saved ? 'Saved' : 'Save')}</button>
-          <button type="button" onClick={reserveItem}>{t('Reserve')}</button>
+          <button type="button" className="save-food-button" onClick={() => requireAuth(() => addNotification?.(`${item.title} saved`))}>{t(item.saved ? 'Saved' : 'Save')}</button>
+          <button type="button" onClick={() => requireAuth(reserveItem)}>{t('Reserve')}</button>
         </>
       }
     />
   )
 }
 
-function ProductShell({ t, backTo, backLabel, imageText, eyebrow, title, price, seller, rating, badge, details, ctas }) {
+function ProductShell({ t, backTo, backLabel, imageText, eyebrow, title, price, sellerLabel, seller, rating, badge, description, details, ctas }) {
   return (
     <section className="detail-page">
       <Link to={backTo} className="back-link">{t(backLabel)}</Link>
 
       <div className="detail-layout">
-        <div className="detail-photo">
-          <span>{imageText}</span>
+        <div className="detail-gallery">
+          <div className="detail-photo">
+            <span>{imageText}</span>
+          </div>
+          <div className="detail-thumbnails" aria-label="Product photos">
+            <div>{imageText}</div>
+            <div>{imageText}</div>
+            <div>{imageText}</div>
+          </div>
         </div>
 
         <article className="detail-info">
           <p className="eyebrow">{t(eyebrow)}</p>
           <h1>{t(title)}</h1>
           <p className="detail-price">${price}</p>
+          <p className="detail-description">{t(description)}</p>
 
           <div className="seller-panel">
             <div>
-              <p className="eyebrow">{t('Seller')}</p>
+              <p className="eyebrow">{t(sellerLabel)}</p>
               <h2>{seller}</h2>
             </div>
             <span>{rating} {t('rating')}</span>
