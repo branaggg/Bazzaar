@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { useAuth } from './auth/AuthContext.jsx'
+import { useRequireAuth } from './auth/useRequireAuth.js'
 
 const groups = [
   {
@@ -125,6 +127,8 @@ const onlineFriends = [
 ]
 
 export default function ChatPage({ t, addNotification }) {
+  const { user } = useAuth()
+  const requireAuth = useRequireAuth()
   const [communityGroups, setCommunityGroups] = useState(groups)
   const [communityPosts, setCommunityPosts] = useState(initialPosts)
   const [selectedGroupId, setSelectedGroupId] = useState('general')
@@ -152,6 +156,7 @@ export default function ChatPage({ t, addNotification }) {
   )
 
   function toggleJoin(groupId) {
+    if (!requireAuth()) return
     setCommunityGroups((currentGroups) =>
       currentGroups.map((group) =>
         group.id === groupId
@@ -167,13 +172,14 @@ export default function ChatPage({ t, addNotification }) {
 
   function submitPost(event) {
     event.preventDefault()
+    if (!requireAuth()) return
     if (!postDraft.trim()) return
 
     setCommunityPosts((current) => [
       {
         id: Date.now(),
         group: selectedGroupId,
-        author: 'Anika Sharma',
+        author: user.name,
         time: 'Just now',
         title: postDraft.trim(),
         body: 'New community post.',

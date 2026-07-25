@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useMemo, useState } from 'react'
+import { useRequireAuth } from './auth/useRequireAuth.js'
 
 const foodItems = [
-  { id: 1, title: 'Homemade Mango Pickle', vendor: "Aunty's Kitchen", category: 'Pickles', diet: 'Vegetarian', method: 'Pickup', price: 12, rating: 4.9, distance: 1.8, ready: 'Today', saved: true },
+  { id: 1, title: 'Homemade Mango Pickle', vendor: "Aunty's Kitchen", category: 'Pickles', diet: 'Vegetarian', method: 'Pickup', price: 12, rating: 4.9, distance: 1.8, ready: 'Today', saved: false },
   { id: 2, title: 'Premium Saffron Threads', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegetarian', method: 'Shipping', price: 30, rating: 4.8, distance: 6.4, ready: 'Ships Tomorrow', saved: false },
-  { id: 3, title: 'Fresh Mathri Box', vendor: 'Delhi Delights', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 15, rating: 4.7, distance: 3.2, ready: 'Today', saved: true },
+  { id: 3, title: 'Fresh Mathri Box', vendor: 'Delhi Delights', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 15, rating: 4.7, distance: 3.2, ready: 'Today', saved: false },
   { id: 4, title: 'Idli Batter Family Pack', vendor: 'Lakshmi Foods', category: 'Meal Prep', diet: 'Vegan', method: 'Pickup', price: 10, rating: 4.9, distance: 2.4, ready: 'Tomorrow', saved: false },
   { id: 5, title: 'Gulab Jamun Party Tray', vendor: 'Mithai Corner', category: 'Sweets', diet: 'Vegetarian', method: 'Delivery', price: 28, rating: 4.6, distance: 4.5, ready: 'Today', saved: false },
   { id: 6, title: 'Hyderabadi Biryani Box', vendor: 'Deccan Table', category: 'Meals', diet: 'Non-Vegetarian', method: 'Delivery', price: 18, rating: 4.8, distance: 5.1, ready: 'Today', saved: false },
@@ -17,6 +18,7 @@ const diets = ['Any Diet', 'Vegetarian', 'Vegan', 'Non-Vegetarian']
 const methods = ['Any Method', 'Pickup', 'Delivery', 'Shipping']
 
 export default function FoodPage({ t, addToCart, addNotification }) {
+  const requireAuth = useRequireAuth()
   const [items, setItems] = useState(foodItems)
   const [filters, setFilters] = useState({
     search: '',
@@ -148,15 +150,19 @@ export default function FoodPage({ t, addToCart, addNotification }) {
                   <span>{t(item.ready)}</span>
                 </div>
                 <div className="food-actions">
-                  <button type="button" className="save-food-button" onClick={() => toggleSave(item.id)}>
+                  <button
+                    type="button"
+                    className="save-food-button"
+                    onClick={() => requireAuth(() => toggleSave(item.id))}
+                  >
                     {item.saved ? t('Saved') : t('Save')}
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={() => requireAuth(() => {
                       addToCart?.({ name: item.title, price: item.price })
                       addNotification?.(`${item.title} reserved from ${item.vendor}`)
-                    }}
+                    })}
                   >
                     {t('Reserve')}
                   </button>

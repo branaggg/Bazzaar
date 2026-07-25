@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from './auth/AuthContext.jsx'
 
 export default function LandingPage({ t }) {
+  const { isAuthenticated } = useAuth()
+
   return (
     <section className="landing">
       <div className="hero-copy">
@@ -9,6 +12,12 @@ export default function LandingPage({ t }) {
         <p>
           {t('The premier space for Indian women to buy, sell, trade, and connect. From exquisite sarees to authentic homemade spices, find your niche here.')}
         </p>
+        {!isAuthenticated && (
+          <div className="hero-actions">
+            <Link to="/signup" className="button">{t('Sign up')}</Link>
+            <Link to="/login" className="button secondary-button">{t('Log in')}</Link>
+          </div>
+        )}
       </div>
 
       <div className="feature-grid">

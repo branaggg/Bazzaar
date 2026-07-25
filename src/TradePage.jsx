@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { useAuth } from './auth/AuthContext.jsx'
+import { useRequireAuth } from './auth/useRequireAuth.js'
 
 const items = [
   {
@@ -191,6 +193,8 @@ const conditions = ['Any Condition', 'Brand New', 'Like New', 'Worn Once', 'Good
 const locations = ['Any Location', 'San Jose', 'Fremont', 'Sunnyvale', 'Cupertino']
 
 export default function TradePage({ t, addToCart, addMessage, addNotification }) {
+  const { user } = useAuth()
+  const requireAuth = useRequireAuth()
   const [marketItems, setMarketItems] = useState(items)
   const [listingOpen, setListingOpen] = useState(false)
   const [tradeTarget, setTradeTarget] = useState(null)
@@ -247,6 +251,7 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
 
   function submitListing(event) {
     event.preventDefault()
+    if (!requireAuth()) return
     if (!listing.name || !listing.price) return
 
     setMarketItems((current) => [
@@ -259,10 +264,10 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
         size: listing.size,
         price: Number(listing.price),
         condition: 'Like New',
-        seller: 'Anika Sharma',
+        seller: user.name,
         location: listing.location,
-        rating: 4.9,
-        badge: 'Verified seller',
+        rating: user.rating,
+        badge: user.verified ? 'Verified seller' : 'New member',
       },
       ...current,
     ])
@@ -273,6 +278,7 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
 
   function submitTrade(event) {
     event.preventDefault()
+    if (!requireAuth()) return
     const formData = new FormData(event.currentTarget)
     addMessage?.({
       from: tradeTarget.seller,
@@ -291,7 +297,10 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
         </div>
         <div className="header-actions">
           <p>{filteredItems.length} {t('items found')}</p>
-          <button type="button" onClick={() => setListingOpen((isOpen) => !isOpen)}>
+          <button
+            type="button"
+            onClick={() => requireAuth(() => setListingOpen((isOpen) => !isOpen))}
+          >
             {listingOpen ? t('Hide Listing Form') : t('Sell / Trade Item')}
           </button>
         </div>
@@ -396,8 +405,20 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
                 <p>{t('Location')}: {t(item.location)}</p>
                 <p className="trust-badge">{t(item.badge)}</p>
                 <div className="product-actions">
-                  <button type="button" className="trade-button" onClick={() => setTradeTarget(item)}>{t('Offer Trade')}</button>
-                  <button type="button" className="buy-button" onClick={() => addToCart?.(item)}>{t('Buy')}</button>
+                  <button
+                    type="button"
+                    className="trade-button"
+                    onClick={() => requireAuth(() => setTradeTarget(item))}
+                  >
+                    {t('Offer Trade')}
+                  </button>
+                  <button
+                    type="button"
+                    className="buy-button"
+                    onClick={() => requireAuth(() => addToCart?.(item))}
+                  >
+                    {t('Buy')}
+                  </button>
                 </div>
               </div>
             </article>
