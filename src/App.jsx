@@ -22,9 +22,7 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activePanel, setActivePanel] = useState(null)
   const [spinning, setSpinning] = useState(false)
-  const [cartPulse, setCartPulse] = useState(false)
   const fabRef = useRef(null)
-  const previousCartCount = useRef(cart.reduce((sum, item) => sum + (item.quantity || 1), 0))
   const navigate = useNavigate()
 
   const initials = user.name
@@ -36,30 +34,6 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
 
   const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0)
   const unreadMessages = messages.filter((message) => !message.read).length
-
-  useEffect(() => {
-    if (previousCartCount.current === cartCount) {
-      return undefined
-    }
-
-    if (cartCount > previousCartCount.current) {
-      setMenuOpen(true)
-      setActivePanel('cart')
-    }
-
-    setCartPulse(true)
-    const timer = window.setTimeout(() => setCartPulse(false), 450)
-    const closeTimer = window.setTimeout(() => {
-      setMenuOpen(false)
-      setActivePanel(null)
-    }, 3000)
-    previousCartCount.current = cartCount
-
-    return () => {
-      window.clearTimeout(timer)
-      window.clearTimeout(closeTimer)
-    }
-  }, [cartCount])
 
   useEffect(() => {
     function handlePointerDown(event) {
@@ -155,7 +129,7 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
       <div className="account-orbit" aria-hidden={!menuOpen}>
         <button
           type="button"
-          className={`orbit-circle ${activePanel === 'cart' ? 'is-active' : ''} ${cartPulse ? 'cart-pulse' : ''}`}
+          className={`orbit-circle ${activePanel === 'cart' ? 'is-active' : ''}`}
           style={{ '--orbit-index': 0 }}
           aria-label={`${t('Cart')} (${cartCount})`}
           title={t('Cart')}
@@ -163,7 +137,7 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
           onClick={() => openPanel('cart')}
         >
           <CartIcon />
-          {cartCount > 0 && <span className={`orbit-badge ${cartPulse ? 'cart-badge-pulse' : ''}`}>{cartCount}</span>}
+          {cartCount > 0 && <span className="orbit-badge">{cartCount}</span>}
         </button>
 
         <button

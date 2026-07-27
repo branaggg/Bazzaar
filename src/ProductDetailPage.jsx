@@ -7,7 +7,6 @@ import { tradeItems } from './TradePage.jsx'
 export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
   const { id } = useParams()
   const requireAuth = useRequireAuth()
-  const [isAdded, setIsAdded] = useState(false)
   const item = tradeItems.find((product) => product.id === Number(id))
 
   if (!item) return <MissingProduct t={t} backTo="/trade" />
@@ -18,12 +17,6 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
       text: `Trade offer started for ${item.name}.`,
     })
     addNotification?.(`Trade offer started with ${item.seller}`)
-  }
-
-  function handleAddToCart() {
-    addToCart?.(item)
-    setIsAdded(true)
-    window.setTimeout(() => setIsAdded(false), 1000)
   }
 
   return (
@@ -50,7 +43,7 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
       ctas={
         <>
           <button type="button" className="trade-button" onClick={() => requireAuth(sendTradeOffer)}>{t('Offer Trade')}</button>
-          <button type="button" className={`buy-button add-cart-button ${isAdded ? 'is-added' : ''}`} onClick={() => requireAuth(handleAddToCart)}>{isAdded ? 'Added ✓' : t('Buy')}</button>
+          <button type="button" className="buy-button" onClick={() => requireAuth(() => addToCart?.(item))}>{t('Buy')}</button>
           <button type="button" className="message-button" onClick={() => requireAuth(() => addMessage?.({ from: item.seller, text: `Message started about ${item.name}.` }))}>{t('Message Seller')}</button>
         </>
       }
@@ -61,7 +54,6 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
 export function FoodDetailPage({ t, addToCart, addNotification }) {
   const { id } = useParams()
   const requireAuth = useRequireAuth()
-  const [isAdded, setIsAdded] = useState(false)
   const item = foodItems.find((product) => product.id === Number(id))
 
   if (!item) return <MissingProduct t={t} backTo="/food" />
@@ -75,8 +67,6 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
       method: item.method,
     })
     addNotification?.(`${item.title} added to cart`)
-    setIsAdded(true)
-    window.setTimeout(() => setIsAdded(false), 1000)
   }
 
   return (
@@ -102,7 +92,7 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
       ]}
       ctas={
         <>
-          <button type="button" className={`add-cart-button ${isAdded ? 'is-added' : ''}`} onClick={() => requireAuth(addFoodToCart)}>{isAdded ? 'Added ✓' : t('Add to cart')}</button>
+          <button type="button" onClick={() => requireAuth(addFoodToCart)}>{t('Add to cart')}</button>
         </>
       }
     />
@@ -110,6 +100,25 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
 }
 
 function ProductShell({ t, backTo, backLabel, imageText, eyebrow, title, price, sellerLabel, seller, rating, badge, description, details, ctas }) {
+  const [ratingInput, setRatingInput] = useState(0)
+  const [reviewText, setReviewText] = useState('')
+  const [reviews, setReviews] = useState([])
+
+  const averageRating = reviews.length > 0
+    ? ((rating + reviews.reduce((sum, review) => sum + review.stars, 0)) / (reviews.length + 1)).toFixed(1)
+    : rating.toFixed(1)
+
+  function submitReview(event) {
+    event.preventDefault()
+    if (!ratingInput) return
+    setReviews((current) => [
+      ...current,
+      { id: Date.now(), stars: ratingInput, text: reviewText.trim() },
+    ])
+    setRatingInput(0)
+    setReviewText('')
+  }
+
   return (
     <section className="detail-page">
       <Link to={backTo} className="back-link">{t(backLabel)}</Link>
@@ -149,6 +158,55 @@ function ProductShell({ t, backTo, backLabel, imageText, eyebrow, title, price, 
               </div>
             ))}
           </dl>
+
+          <div className="review-panel">
+            <div className="review-summary">
+              <h3>{t('Reviews')}</h3>
+              <p>{t('Share a rating from 1 to 5 stars')}</p>
+              <strong>{averageRating} / 5</strong>
+            </div>
+
+            <form className="review-form" onSubmit={submitReview}>
+              <div className="star-picker" role="radiogroup" aria-label={t('Select rating')}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className={`star-button${ratingInput >= star ? ' is-selected' : ''}`}
+                    onClick={() => setRatingInput(star)}
+                    aria-pressed={ratingInput === star}
+                    aria-label={`${star} ${t('star')}`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+              <textarea
+                className="review-text"
+                value={reviewText}
+                onChange={(event) => setReviewText(event.target.value)}
+                placeholder={t('Add a short review...')}
+                rows="3"
+              />
+              <button type="submit" className="button review-submit" disabled={ratingInput === 0}>
+                {t('Submit rating')}
+              </button>
+            </form>
+
+            {reviews.length > 0 && (
+              <div className="review-list">
+                {reviews.map((review) => (
+                  <div key={review.id} className="review-item">
+                    <div>
+                      <span>{'★'.repeat(review.stars)}{'☆'.repeat(5 - review.stars)}</span>
+                      {review.text && <p>{review.text}</p>}
+                    </div>
+                    <small>{t('New rating')}</small>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="detail-actions">
             {ctas}

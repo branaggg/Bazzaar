@@ -26,7 +26,6 @@ export default function FoodPage({ t, addToCart, addNotification }) {
     method: 'Any Method',
     sort: 'recommended',
   })
-  const [addedItemId, setAddedItemId] = useState(null)
 
   const filteredItems = useMemo(() => {
     const query = filters.search.trim().toLowerCase()
@@ -73,8 +72,6 @@ export default function FoodPage({ t, addToCart, addNotification }) {
       method: item.method,
     })
     addNotification?.(`${item.title} added to cart`)
-    setAddedItemId(item.id)
-    window.setTimeout(() => setAddedItemId((current) => (current === item.id ? null : current)), 1000)
   }
 
   return (
@@ -159,12 +156,11 @@ export default function FoodPage({ t, addToCart, addNotification }) {
                 <div className="food-actions">
                   <button
                     type="button"
-                    className={`add-cart-button ${addedItemId === item.id ? 'is-added' : ''}`}
                     onClick={() => requireAuth(() => {
                       addFoodToCart(item)
                     })}
                   >
-                    {addedItemId === item.id ? 'Added ✓' : t('Add to cart')}
+                    {t('Add to cart')}
                   </button>
                   <Link to={`/food/${item.id}`} className="detail-link">{t('View Details')}</Link>
                 </div>

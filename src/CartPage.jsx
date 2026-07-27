@@ -122,7 +122,11 @@ export default function CartPage({
               <span>{t('Total')}</span>
               <strong>${subtotal.toFixed(2)}</strong>
             </div>
-            <button type="button" className="cart-checkout-button">
+            <button
+              type="button"
+              className="cart-checkout-button"
+              onClick={() => navigate('/checkout')}
+            >
               {t('Proceed to checkout')}
             </button>
             <p className="cart-summary-note">
