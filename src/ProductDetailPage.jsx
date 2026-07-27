@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import { useState } from 'react'
 import { useRequireAuth } from './auth/useRequireAuth.js'
 import { foodItems } from './FoodPage.jsx'
 import { tradeItems } from './TradePage.jsx'
@@ -6,6 +7,7 @@ import { tradeItems } from './TradePage.jsx'
 export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
   const { id } = useParams()
   const requireAuth = useRequireAuth()
+  const [isAdded, setIsAdded] = useState(false)
   const item = tradeItems.find((product) => product.id === Number(id))
 
   if (!item) return <MissingProduct t={t} backTo="/trade" />
@@ -16,6 +18,12 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
       text: `Trade offer started for ${item.name}.`,
     })
     addNotification?.(`Trade offer started with ${item.seller}`)
+  }
+
+  function handleAddToCart() {
+    addToCart?.(item)
+    setIsAdded(true)
+    window.setTimeout(() => setIsAdded(false), 1000)
   }
 
   return (
@@ -42,7 +50,7 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
       ctas={
         <>
           <button type="button" className="trade-button" onClick={() => requireAuth(sendTradeOffer)}>{t('Offer Trade')}</button>
-          <button type="button" className="buy-button" onClick={() => requireAuth(() => addToCart?.(item))}>{t('Buy')}</button>
+          <button type="button" className={`buy-button add-cart-button ${isAdded ? 'is-added' : ''}`} onClick={() => requireAuth(handleAddToCart)}>{isAdded ? 'Added ✓' : t('Buy')}</button>
           <button type="button" className="message-button" onClick={() => requireAuth(() => addMessage?.({ from: item.seller, text: `Message started about ${item.name}.` }))}>{t('Message Seller')}</button>
         </>
       }
@@ -53,13 +61,22 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
 export function FoodDetailPage({ t, addToCart, addNotification }) {
   const { id } = useParams()
   const requireAuth = useRequireAuth()
+  const [isAdded, setIsAdded] = useState(false)
   const item = foodItems.find((product) => product.id === Number(id))
 
   if (!item) return <MissingProduct t={t} backTo="/food" />
 
-  function reserveItem() {
-    addToCart?.({ name: item.title, price: item.price })
-    addNotification?.(`${item.title} reserved from ${item.vendor}`)
+  function addFoodToCart() {
+    addToCart?.({
+      name: item.title,
+      price: item.price,
+      seller: item.vendor,
+      category: item.category,
+      method: item.method,
+    })
+    addNotification?.(`${item.title} added to cart`)
+    setIsAdded(true)
+    window.setTimeout(() => setIsAdded(false), 1000)
   }
 
   return (
@@ -85,8 +102,7 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
       ]}
       ctas={
         <>
-          <button type="button" className="save-food-button" onClick={() => requireAuth(() => addNotification?.(`${item.title} saved`))}>{t(item.saved ? 'Saved' : 'Save')}</button>
-          <button type="button" onClick={() => requireAuth(reserveItem)}>{t('Reserve')}</button>
+          <button type="button" className={`add-cart-button ${isAdded ? 'is-added' : ''}`} onClick={() => requireAuth(addFoodToCart)}>{isAdded ? 'Added ✓' : t('Add to cart')}</button>
         </>
       }
     />

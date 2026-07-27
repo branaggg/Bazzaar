@@ -3,14 +3,14 @@ import { useMemo, useState } from 'react'
 import { useRequireAuth } from './auth/useRequireAuth.js'
 
 export const foodItems = [
-  { id: 1, title: 'Homemade Mango Pickle', vendor: "Aunty's Kitchen", category: 'Pickles', diet: 'Vegetarian', method: 'Pickup', price: 12, rating: 4.9, distance: 1.8, ready: 'Today', saved: false },
-  { id: 2, title: 'Premium Saffron Threads', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegetarian', method: 'Shipping', price: 30, rating: 4.8, distance: 6.4, ready: 'Ships Tomorrow', saved: false },
-  { id: 3, title: 'Fresh Mathri Box', vendor: 'Delhi Delights', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 15, rating: 4.7, distance: 3.2, ready: 'Today', saved: false },
-  { id: 4, title: 'Idli Batter Family Pack', vendor: 'Lakshmi Foods', category: 'Meal Prep', diet: 'Vegan', method: 'Pickup', price: 10, rating: 4.9, distance: 2.4, ready: 'Tomorrow', saved: false },
-  { id: 5, title: 'Gulab Jamun Party Tray', vendor: 'Mithai Corner', category: 'Sweets', diet: 'Vegetarian', method: 'Delivery', price: 28, rating: 4.6, distance: 4.5, ready: 'Today', saved: false },
-  { id: 6, title: 'Hyderabadi Biryani Box', vendor: 'Deccan Table', category: 'Meals', diet: 'Non-Vegetarian', method: 'Delivery', price: 18, rating: 4.8, distance: 5.1, ready: 'Today', saved: false },
-  { id: 7, title: 'Chai Masala Blend', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegan', method: 'Shipping', price: 9, rating: 4.7, distance: 6.4, ready: 'Ships Tomorrow', saved: false },
-  { id: 8, title: 'Mini Samosa Platter', vendor: 'Punjabi Bites', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 22, rating: 4.5, distance: 2.9, ready: 'Today', saved: false },
+  { id: 1, title: 'Homemade Mango Pickle', vendor: "Aunty's Kitchen", category: 'Pickles', diet: 'Vegetarian', method: 'Pickup', price: 12, rating: 4.9, distance: 1.8, ready: 'Today' },
+  { id: 2, title: 'Premium Saffron Threads', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegetarian', method: 'Shipping', price: 30, rating: 4.8, distance: 6.4, ready: 'Ships Tomorrow' },
+  { id: 3, title: 'Fresh Mathri Box', vendor: 'Delhi Delights', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 15, rating: 4.7, distance: 3.2, ready: 'Today' },
+  { id: 4, title: 'Idli Batter Family Pack', vendor: 'Lakshmi Foods', category: 'Meal Prep', diet: 'Vegan', method: 'Pickup', price: 10, rating: 4.9, distance: 2.4, ready: 'Tomorrow' },
+  { id: 5, title: 'Gulab Jamun Party Tray', vendor: 'Mithai Corner', category: 'Sweets', diet: 'Vegetarian', method: 'Delivery', price: 28, rating: 4.6, distance: 4.5, ready: 'Today' },
+  { id: 6, title: 'Hyderabadi Biryani Box', vendor: 'Deccan Table', category: 'Meals', diet: 'Non-Vegetarian', method: 'Delivery', price: 18, rating: 4.8, distance: 5.1, ready: 'Today' },
+  { id: 7, title: 'Chai Masala Blend', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegan', method: 'Shipping', price: 9, rating: 4.7, distance: 6.4, ready: 'Ships Tomorrow' },
+  { id: 8, title: 'Mini Samosa Platter', vendor: 'Punjabi Bites', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 22, rating: 4.5, distance: 2.9, ready: 'Today' },
 ]
 
 const categories = ['All Categories', 'Meals', 'Snacks', 'Sweets', 'Spices', 'Pickles', 'Meal Prep']
@@ -19,7 +19,6 @@ const methods = ['Any Method', 'Pickup', 'Delivery', 'Shipping']
 
 export default function FoodPage({ t, addToCart, addNotification }) {
   const requireAuth = useRequireAuth()
-  const [items, setItems] = useState(foodItems)
   const [filters, setFilters] = useState({
     search: '',
     category: 'All Categories',
@@ -27,10 +26,11 @@ export default function FoodPage({ t, addToCart, addNotification }) {
     method: 'Any Method',
     sort: 'recommended',
   })
+  const [addedItemId, setAddedItemId] = useState(null)
 
   const filteredItems = useMemo(() => {
     const query = filters.search.trim().toLowerCase()
-    const results = items.filter((item) => {
+    const results = foodItems.filter((item) => {
       const searchableText = `${item.title} ${item.vendor} ${item.category} ${item.diet}`.toLowerCase()
 
       return (
@@ -48,16 +48,10 @@ export default function FoodPage({ t, addToCart, addNotification }) {
       if (filters.sort === 'distance') return a.distance - b.distance
       return b.rating - a.rating || a.distance - b.distance
     })
-  }, [filters, items])
+  }, [filters])
 
   function updateFilter(name, value) {
     setFilters((current) => ({ ...current, [name]: value }))
-  }
-
-  function toggleSave(itemId) {
-    setItems((currentItems) =>
-      currentItems.map((item) => item.id === itemId ? { ...item, saved: !item.saved } : item),
-    )
   }
 
   function clearFilters() {
@@ -68,6 +62,19 @@ export default function FoodPage({ t, addToCart, addNotification }) {
       method: 'Any Method',
       sort: 'recommended',
     })
+  }
+
+  function addFoodToCart(item) {
+    addToCart?.({
+      name: item.title,
+      price: item.price,
+      seller: item.vendor,
+      category: item.category,
+      method: item.method,
+    })
+    addNotification?.(`${item.title} added to cart`)
+    setAddedItemId(item.id)
+    window.setTimeout(() => setAddedItemId((current) => (current === item.id ? null : current)), 1000)
   }
 
   return (
@@ -152,19 +159,12 @@ export default function FoodPage({ t, addToCart, addNotification }) {
                 <div className="food-actions">
                   <button
                     type="button"
-                    className="save-food-button"
-                    onClick={() => requireAuth(() => toggleSave(item.id))}
-                  >
-                    {item.saved ? t('Saved') : t('Save')}
-                  </button>
-                  <button
-                    type="button"
+                    className={`add-cart-button ${addedItemId === item.id ? 'is-added' : ''}`}
                     onClick={() => requireAuth(() => {
-                      addToCart?.({ name: item.title, price: item.price })
-                      addNotification?.(`${item.title} reserved from ${item.vendor}`)
+                      addFoodToCart(item)
                     })}
                   >
-                    {t('Reserve')}
+                    {addedItemId === item.id ? 'Added ✓' : t('Add to cart')}
                   </button>
                   <Link to={`/food/${item.id}`} className="detail-link">{t('View Details')}</Link>
                 </div>

@@ -197,6 +197,7 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
   const { user } = useAuth()
   const requireAuth = useRequireAuth()
   const [marketItems, setMarketItems] = useState(tradeItems)
+  const [addedItemId, setAddedItemId] = useState(null)
   const [listingOpen, setListingOpen] = useState(false)
   const [tradeTarget, setTradeTarget] = useState(null)
   const [listing, setListing] = useState({
@@ -287,6 +288,12 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
     })
     addNotification?.(`Trade offer sent to ${tradeTarget.seller}`)
     setTradeTarget(null)
+  }
+
+  function handleBuy(item) {
+    addToCart?.(item)
+    setAddedItemId(item.id)
+    window.setTimeout(() => setAddedItemId((current) => (current === item.id ? null : current)), 1000)
   }
 
   return (
@@ -415,10 +422,10 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
                   </button>
                   <button
                     type="button"
-                    className="buy-button"
-                    onClick={() => requireAuth(() => addToCart?.(item))}
+                    className={`buy-button add-cart-button ${addedItemId === item.id ? 'is-added' : ''}`}
+                    onClick={() => requireAuth(() => handleBuy(item))}
                   >
-                    {t('Buy')}
+                    {addedItemId === item.id ? 'Added ✓' : t('Buy')}
                   </button>
                   <Link to={`/trade/${item.id}`} className="detail-link">{t('View Details')}</Link>
                 </div>

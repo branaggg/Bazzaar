@@ -13,6 +13,7 @@ import LoginPage from './LoginPage.jsx'
 import SignupPage from './SignupPage.jsx'
 import SettingsPage from './SettingsPage.jsx'
 import CartPage from './CartPage.jsx'
+import CheckoutPage from './CheckoutPage.jsx'
 import InboxPage from './InboxPage.jsx'
 import { BellIcon, CartIcon, MailIcon, SettingsIcon } from './OrbitIcons.jsx'
 import { languages, makeTranslator } from './translations.js'
@@ -21,7 +22,9 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activePanel, setActivePanel] = useState(null)
   const [spinning, setSpinning] = useState(false)
+  const [cartPulse, setCartPulse] = useState(false)
   const fabRef = useRef(null)
+  const previousCartCount = useRef(cart.reduce((sum, item) => sum + (item.quantity || 1), 0))
   const navigate = useNavigate()
 
   const initials = user.name
@@ -33,6 +36,30 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
 
   const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0)
   const unreadMessages = messages.filter((message) => !message.read).length
+
+  useEffect(() => {
+    if (previousCartCount.current === cartCount) {
+      return undefined
+    }
+
+    if (cartCount > previousCartCount.current) {
+      setMenuOpen(true)
+      setActivePanel('cart')
+    }
+
+    setCartPulse(true)
+    const timer = window.setTimeout(() => setCartPulse(false), 450)
+    const closeTimer = window.setTimeout(() => {
+      setMenuOpen(false)
+      setActivePanel(null)
+    }, 3000)
+    previousCartCount.current = cartCount
+
+    return () => {
+      window.clearTimeout(timer)
+      window.clearTimeout(closeTimer)
+    }
+  }, [cartCount])
 
   useEffect(() => {
     function handlePointerDown(event) {
@@ -90,6 +117,12 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
     navigate('/cart')
   }
 
+  function openCheckout() {
+    setMenuOpen(false)
+    setActivePanel(null)
+    navigate('/checkout')
+  }
+
   function openInbox() {
     setMenuOpen(false)
     setActivePanel(null)
@@ -122,7 +155,7 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
       <div className="account-orbit" aria-hidden={!menuOpen}>
         <button
           type="button"
-          className={`orbit-circle ${activePanel === 'cart' ? 'is-active' : ''}`}
+          className={`orbit-circle ${activePanel === 'cart' ? 'is-active' : ''} ${cartPulse ? 'cart-pulse' : ''}`}
           style={{ '--orbit-index': 0 }}
           aria-label={`${t('Cart')} (${cartCount})`}
           title={t('Cart')}
@@ -130,7 +163,7 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
           onClick={() => openPanel('cart')}
         >
           <CartIcon />
-          {cartCount > 0 && <span className="orbit-badge">{cartCount}</span>}
+          {cartCount > 0 && <span className={`orbit-badge ${cartPulse ? 'cart-badge-pulse' : ''}`}>{cartCount}</span>}
         </button>
 
         <button
@@ -206,7 +239,7 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
                   ))}
                   {cart.length > 3 && <p>+{cart.length - 3} {t('more')}</p>}
                   <button type="button" onClick={openCart}>{t('View cart')}</button>
-                  <button type="button" className="reset-button" onClick={openCart}>
+                  <button type="button" className="reset-button" onClick={openCheckout}>
                     {t('Checkout')}
                   </button>
                 </>
@@ -420,6 +453,17 @@ function AppShell() {
                 updateCartQuantity={updateCartQuantity}
                 removeFromCart={removeFromCart}
                 clearCart={clearCart}
+              />
+            )}
+          />
+          <Route
+            path="/checkout"
+            element={(
+              <CheckoutPage
+                t={t}
+                cart={cart}
+                clearCart={clearCart}
+                addNotification={addNotification}
               />
             )}
           />
