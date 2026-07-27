@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link, NavLink, useLocation, use
 import './App.css'
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx'
 import LandingPage from './LandingPage.jsx'
-import TradePage from './TradePage.jsx'
+import TradePage, { tradeItems } from './TradePage.jsx'
+import AddListingPage from './AddListingPage.jsx'
 import FoodPage from './FoodPage.jsx'
 import ServicesPage from './ServicesPage.jsx'
 import { FoodDetailPage, TradeDetailPage } from './ProductDetailPage.jsx'
@@ -268,6 +269,7 @@ function AppShell() {
   const [cart, setCart] = useState([])
   const [messages, setMessages] = useState([])
   const [notifications, setNotifications] = useState([])
+  const [marketItems, setMarketItems] = useState(tradeItems)
   const t = useMemo(() => makeTranslator(language), [language])
   const isLanding = location.pathname === '/'
 
@@ -455,8 +457,9 @@ function AppShell() {
               />
             )}
           />
-          <Route path="/trade" element={<TradePage t={t} addToCart={addToCart} addMessage={addMessage} addNotification={addNotification} />} />
+          <Route path="/trade" element={<TradePage t={t} marketItems={marketItems} addToCart={addToCart} addMessage={addMessage} addNotification={addNotification} />} />
           <Route path="/trade/:id" element={<TradeDetailPage t={t} addToCart={addToCart} addMessage={addMessage} addNotification={addNotification} />} />
+          <Route path="/add-listing" element={<AddListingPage t={t} setMarketItems={setMarketItems} addNotification={addNotification} />} />
           <Route path="/food" element={<FoodPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
           <Route path="/food/:id" element={<FoodDetailPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
           <Route path="/food/recipes" element={<RecipesPage t={t} />} />

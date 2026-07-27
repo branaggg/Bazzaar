@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { useAuth } from './auth/AuthContext.jsx'
 import { useRequireAuth } from './auth/useRequireAuth.js'
@@ -193,20 +193,11 @@ const sizes = ['All Sizes', 'XS', 'S', 'M', 'L', 'One Size']
 const conditions = ['Any Condition', 'Brand New', 'Like New', 'Worn Once', 'Good']
 const locations = ['Any Location', 'San Jose', 'Fremont', 'Sunnyvale', 'Cupertino']
 
-export default function TradePage({ t, addToCart, addMessage, addNotification }) {
+export default function TradePage({ t, marketItems, addToCart, addMessage, addNotification }) {
+  const navigate = useNavigate()
   const { user } = useAuth()
   const requireAuth = useRequireAuth()
-  const [marketItems, setMarketItems] = useState(tradeItems)
-  const [listingOpen, setListingOpen] = useState(false)
   const [tradeTarget, setTradeTarget] = useState(null)
-  const [listing, setListing] = useState({
-    name: '',
-    category: 'Saree',
-    occasion: 'Everyday',
-    size: 'M',
-    price: '',
-    location: 'San Jose',
-  })
   const [filters, setFilters] = useState({
     category: 'All Clothing',
     occasion: 'All Occasions',
@@ -250,33 +241,6 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
     })
   }
 
-  function submitListing(event) {
-    event.preventDefault()
-    if (!requireAuth()) return
-    if (!listing.name || !listing.price) return
-
-    setMarketItems((current) => [
-      {
-        id: Date.now(),
-        name: listing.name,
-        category: listing.category,
-        style: 'Community Listed',
-        occasion: listing.occasion,
-        size: listing.size,
-        price: Number(listing.price),
-        condition: 'Like New',
-        seller: user.name,
-        location: listing.location,
-        rating: user.rating,
-        badge: user.verified ? 'Verified seller' : 'New member',
-      },
-      ...current,
-    ])
-    setListing({ name: '', category: 'Saree', occasion: 'Everyday', size: 'M', price: '', location: 'San Jose' })
-    setListingOpen(false)
-    addNotification?.('Your clothing listing is live')
-  }
-
   function submitTrade(event) {
     event.preventDefault()
     if (!requireAuth()) return
@@ -300,32 +264,12 @@ export default function TradePage({ t, addToCart, addMessage, addNotification })
           <p>{filteredItems.length} {t('items found')}</p>
           <button
             type="button"
-            onClick={() => requireAuth(() => setListingOpen((isOpen) => !isOpen))}
+            onClick={() => requireAuth(() => navigate('/add-listing'))}
           >
-            {listingOpen ? t('Hide Listing Form') : t('Sell / Trade Item')}
+            {t('Create listing')}
           </button>
         </div>
       </div>
-
-      {listingOpen && (
-        <form className="create-listing" onSubmit={submitListing}>
-          <input value={listing.name} onChange={(event) => setListing((current) => ({ ...current, name: event.target.value }))} placeholder={t('Item name')} />
-          <select value={listing.category} onChange={(event) => setListing((current) => ({ ...current, category: event.target.value }))}>
-            {categories.filter((category) => category !== 'All Clothing').map((category) => <option key={category} value={category}>{t(category)}</option>)}
-          </select>
-          <select value={listing.occasion} onChange={(event) => setListing((current) => ({ ...current, occasion: event.target.value }))}>
-            {occasions.filter((occasion) => occasion !== 'All Occasions').map((occasion) => <option key={occasion} value={occasion}>{t(occasion)}</option>)}
-          </select>
-          <select value={listing.size} onChange={(event) => setListing((current) => ({ ...current, size: event.target.value }))}>
-            {sizes.filter((size) => size !== 'All Sizes').map((size) => <option key={size} value={size}>{t(size)}</option>)}
-          </select>
-          <input type="number" min="1" value={listing.price} onChange={(event) => setListing((current) => ({ ...current, price: event.target.value }))} placeholder={t('Price')} />
-          <select value={listing.location} onChange={(event) => setListing((current) => ({ ...current, location: event.target.value }))}>
-            {locations.filter((location) => location !== 'Any Location').map((location) => <option key={location} value={location}>{t(location)}</option>)}
-          </select>
-          <button type="submit">{t('Publish Listing')}</button>
-        </form>
-      )}
 
       <div className="filter-panel" aria-label="Marketplace filters">
         <label>
