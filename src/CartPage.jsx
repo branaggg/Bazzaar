@@ -75,28 +75,48 @@ export default function CartPage({
 
                   <div className="cart-item-body">
                     <div className="cart-item-heading">
-                      <h2>{t(item.name)}</h2>
+                      <div>
+                        <h2>{t(item.name)}</h2>
+                        {item.seller && <p>{t('Seller')}: {item.seller}</p>}
+                        {item.category && <p>{t(item.category)}</p>}
+                        <p className="cart-unit-price">${Number(item.price).toFixed(2)} {t('each')}</p>
+                      </div>
                       <p className="price">${lineTotal.toFixed(2)}</p>
                     </div>
-                    {item.seller && <p>{t('Seller')}: {item.seller}</p>}
-                    {item.category && <p>{t(item.category)}</p>}
-                    <p className="cart-unit-price">${item.price} {t('each')}</p>
 
                     <div className="cart-item-actions">
-                      <label className="cart-qty">
-                        <span>{t('Qty')}</span>
-                        <select
-                          value={quantity}
-                          onChange={(event) => updateCartQuantity(item.id, Number(event.target.value))}
+                      <div className="cart-qty-stepper" role="group" aria-label={t('Qty')}>
+                        <button
+                          type="button"
+                          className="cart-qty-btn"
+                          aria-label={t('Decrease quantity')}
+                          onClick={() => updateCartQuantity(item.id, quantity - 1)}
                         >
-                          {Array.from({ length: 10 }, (_, index) => index + 1).map((value) => (
-                            <option key={value} value={value}>{value}</option>
-                          ))}
-                        </select>
-                      </label>
+                          −
+                        </button>
+                        <input
+                          className="cart-qty-input"
+                          type="number"
+                          min="1"
+                          max="10"
+                          value={quantity}
+                          aria-label={t('Qty')}
+                          onChange={(event) => updateCartQuantity(item.id, Number(event.target.value))}
+                        />
+                        <button
+                          type="button"
+                          className="cart-qty-btn"
+                          aria-label={t('Increase quantity')}
+                          disabled={quantity >= 10}
+                          onClick={() => updateCartQuantity(item.id, quantity + 1)}
+                        >
+                          +
+                        </button>
+                      </div>
+
                       <button
                         type="button"
-                        className="reset-button"
+                        className="reset-button cart-remove-button"
                         onClick={() => removeFromCart(item.id)}
                       >
                         {t('Remove')}
@@ -113,6 +133,10 @@ export default function CartPage({
             <div className="cart-summary-row">
               <span>{t('Subtotal')}</span>
               <strong>${subtotal.toFixed(2)}</strong>
+            </div>
+            <div className="cart-summary-row">
+              <span>{t('Items')}</span>
+              <strong>{itemCount}</strong>
             </div>
             <div className="cart-summary-row">
               <span>{t('Pickup / delivery')}</span>

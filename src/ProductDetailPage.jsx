@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { useRequireAuth } from './auth/useRequireAuth.js'
+import AddToCartControls from './AddToCartControls.jsx'
 import { foodItems } from './FoodPage.jsx'
 import { tradeItems } from './TradePage.jsx'
 
@@ -20,7 +21,7 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
   }
 
   return (
-      <ProductShell
+    <ProductShell
       t={t}
       backTo="/trade"
       backLabel="Back to Marketplace"
@@ -42,8 +43,13 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
       ]}
       ctas={
         <>
+          <AddToCartControls
+            t={t}
+            requireAuth={requireAuth}
+            className="detail-add-to-cart"
+            onAdd={(quantity) => addToCart?.({ ...item, quantity })}
+          />
           <button type="button" className="trade-button" onClick={() => requireAuth(sendTradeOffer)}>{t('Offer Trade')}</button>
-          <button type="button" className="buy-button" onClick={() => requireAuth(() => addToCart?.(item))}>{t('Buy')}</button>
           <button type="button" className="message-button" onClick={() => requireAuth(() => addMessage?.({ from: item.seller, text: `Message started about ${item.name}.` }))}>{t('Message Seller')}</button>
         </>
       }
@@ -57,17 +63,6 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
   const item = foodItems.find((product) => product.id === Number(id))
 
   if (!item) return <MissingProduct t={t} backTo="/food" />
-
-  function addFoodToCart() {
-    addToCart?.({
-      name: item.title,
-      price: item.price,
-      seller: item.vendor,
-      category: item.category,
-      method: item.method,
-    })
-    addNotification?.(`${item.title} added to cart`)
-  }
 
   return (
     <ProductShell
@@ -93,7 +88,20 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
       ]}
       ctas={
         <>
-          <button type="button" onClick={() => requireAuth(addFoodToCart)}>{t('Add to cart')}</button>
+          <AddToCartControls
+            t={t}
+            requireAuth={requireAuth}
+            className="detail-add-to-cart"
+            onAdd={(quantity) => addToCart?.({
+              name: item.title,
+              title: item.title,
+              price: item.price,
+              vendor: item.vendor,
+              category: item.category,
+              method: item.method,
+              quantity,
+            })}
+          />
         </>
       }
     />

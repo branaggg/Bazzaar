@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { useAuth } from './auth/AuthContext.jsx'
 import { useRequireAuth } from './auth/useRequireAuth.js'
+import AddToCartControls from './AddToCartControls.jsx'
 
 export const tradeItems = [
   {
@@ -349,22 +350,22 @@ export default function TradePage({ t, marketItems, addToCart, addMessage, addNo
                 <p>{t('Seller')}: {item.seller} | {item.rating} rating</p>
                 <p>{t('Location')}: {t(item.location)}</p>
                 <p className="trust-badge">{t(item.badge)}</p>
-                <div className="product-actions">
-                  <button
-                    type="button"
-                    className="trade-button"
-                    onClick={() => requireAuth(() => setTradeTarget(item))}
-                  >
-                    {t('Offer Trade')}
-                  </button>
-                  <button
-                    type="button"
-                    className="buy-button"
-                    onClick={() => requireAuth(() => addToCart?.(item))}
-                  >
-                    {t('Buy')}
-                  </button>
-                  <Link to={`/trade/${item.id}`} className="detail-link">{t('View Details')}</Link>
+                <div className="product-actions product-actions-stack">
+                  <AddToCartControls
+                    t={t}
+                    requireAuth={requireAuth}
+                    onAdd={(quantity) => addToCart?.({ ...item, quantity })}
+                  />
+                  <div className="product-actions-secondary">
+                    <button
+                      type="button"
+                      className="trade-button"
+                      onClick={() => requireAuth(() => setTradeTarget(item))}
+                    >
+                      {t('Offer Trade')}
+                    </button>
+                    <Link to={`/trade/${item.id}`} className="detail-link">{t('View Details')}</Link>
+                  </div>
                 </div>
               </div>
             </article>

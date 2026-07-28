@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { useRequireAuth } from './auth/useRequireAuth.js'
+import AddToCartControls from './AddToCartControls.jsx'
 
 const foodImageUrl = 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=900&q=80'
 
@@ -63,17 +64,6 @@ export default function FoodPage({ t, addToCart, addNotification }) {
       method: 'Any Method',
       sort: 'recommended',
     })
-  }
-
-  function addFoodToCart(item) {
-    addToCart?.({
-      name: item.title,
-      price: item.price,
-      seller: item.vendor,
-      category: item.category,
-      method: item.method,
-    })
-    addNotification?.(`${item.title} added to cart`)
   }
 
   return (
@@ -157,15 +147,20 @@ export default function FoodPage({ t, addToCart, addNotification }) {
                   <span>{item.distance} mi</span>
                   <span>{t(item.ready)}</span>
                 </div>
-                <div className="food-actions">
-                  <button
-                    type="button"
-                    onClick={() => requireAuth(() => {
-                      addFoodToCart(item)
+                <div className="food-actions food-actions-stack">
+                  <AddToCartControls
+                    t={t}
+                    requireAuth={requireAuth}
+                    onAdd={(quantity) => addToCart?.({
+                      name: item.title,
+                      title: item.title,
+                      price: item.price,
+                      vendor: item.vendor,
+                      category: item.category,
+                      method: item.method,
+                      quantity,
                     })}
-                  >
-                    {t('Add to cart')}
-                  </button>
+                  />
                   <Link to={`/food/${item.id}`} className="detail-link">{t('View Details')}</Link>
                 </div>
               </article>

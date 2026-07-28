@@ -16,6 +16,7 @@ import SettingsPage from './SettingsPage.jsx'
 import CartPage from './CartPage.jsx'
 import CheckoutPage from './CheckoutPage.jsx'
 import InboxPage from './InboxPage.jsx'
+import NotificationsPage from './NotificationsPage.jsx'
 import { BellIcon, CartIcon, MailIcon, SettingsIcon } from './OrbitIcons.jsx'
 import { languages, makeTranslator } from './translations.js'
 
@@ -35,6 +36,7 @@ function AccountFab({ user, cart, messages, notifications, logout, t, showCartPa
 
   const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0)
   const unreadMessages = messages.filter((message) => !message.read).length
+  const unreadNotifications = notifications.filter((notification) => !notification.read).length
 
   useEffect(() => {
     function handlePointerDown(event) {
@@ -123,9 +125,14 @@ function AccountFab({ user, cart, messages, notifications, logout, t, showCartPa
     navigate('/inbox')
   }
 
+  function openNotifications() {
+    setMenuOpen(false)
+    setActivePanel(null)
+    navigate('/notifications')
+  }
+
   const panelLabel = {
     profile: 'Account',
-    cart: 'Cart',
     inbox: 'Inbox',
     notifications: 'Notifications',
   }[activePanel] || 'Account'
@@ -149,12 +156,12 @@ function AccountFab({ user, cart, messages, notifications, logout, t, showCartPa
       <div className="account-orbit" aria-hidden={!menuOpen}>
         <button
           type="button"
-          className={`orbit-circle ${activePanel === 'cart' ? 'is-active' : ''}`}
+          className="orbit-circle"
           style={{ '--orbit-index': 0 }}
           aria-label={`${t('Cart')} (${cartCount})`}
           title={t('Cart')}
           tabIndex={menuOpen ? 0 : -1}
-          onClick={() => openPanel('cart')}
+          onClick={openCart}
         >
           <CartIcon />
           {cartCount > 0 && <span className="orbit-badge">{cartCount}</span>}
@@ -183,7 +190,7 @@ function AccountFab({ user, cart, messages, notifications, logout, t, showCartPa
           onClick={() => openPanel('notifications')}
         >
           <BellIcon />
-          {notifications.length > 0 && <span className="orbit-badge">{notifications.length}</span>}
+          {unreadNotifications > 0 && <span className="orbit-badge">{unreadNotifications}</span>}
         </button>
 
         <button
@@ -269,10 +276,14 @@ function AccountFab({ user, cart, messages, notifications, logout, t, showCartPa
               {notifications.length === 0 ? (
                 <p>{t('No notifications yet')}</p>
               ) : (
-                notifications.map((notification) => (
-                  <p key={notification}>{notification}</p>
-                ))
+                <>
+                  {notifications.slice(0, 3).map((notification) => (
+                    <p key={notification.id}>{notification.text}</p>
+                  ))}
+                  {notifications.length > 3 && <p>+{notifications.length - 3} {t('more')}</p>}
+                </>
               )}
+              <button type="button" onClick={openNotifications}>{t('View notifications')}</button>
             </>
           )}
         </div>
@@ -294,7 +305,39 @@ function AppShell() {
   const isLanding = location.pathname === '/'
 
   function addNotification(message) {
-    setNotifications((current) => [message, ...current].slice(0, 5))
+    setNotifications((current) => [
+      {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        text: message,
+        createdAt: new Date().toISOString(),
+        read: false,
+      },
+      ...current,
+    ].slice(0, 30))
+  }
+
+  function markNotificationRead(notificationId) {
+    setNotifications((current) =>
+      current.map((notification) =>
+        notification.id === notificationId ? { ...notification, read: true } : notification,
+      ),
+    )
+  }
+
+  function markAllNotificationsRead() {
+    setNotifications((current) =>
+      current.map((notification) => ({ ...notification, read: true })),
+    )
+  }
+
+  function deleteNotification(notificationId) {
+    setNotifications((current) =>
+      current.filter((notification) => notification.id !== notificationId),
+    )
+  }
+
+  function clearNotifications() {
+    setNotifications([])
   }
 
   function addMessage(message) {
@@ -338,16 +381,18 @@ function AppShell() {
   function addToCart(item) {
     const name = item.name || item.title
     const price = Number(item.price) || 0
+    const quantity = Math.max(1, Math.min(10, Number(item.quantity) || 1))
+    const seller = item.seller || item.vendor || ''
 
     setCart((current) => {
       const existing = current.find(
-        (entry) => entry.name === name && entry.price === price && entry.seller === item.seller,
+        (entry) => entry.name === name && entry.price === price && entry.seller === seller,
       )
 
       if (existing) {
         return current.map((entry) =>
           entry.id === existing.id
-            ? { ...entry, quantity: (entry.quantity || 1) + 1 }
+            ? { ...entry, quantity: Math.min(10, (entry.quantity || 1) + quantity) }
             : entry,
         )
       }
@@ -358,21 +403,31 @@ function AppShell() {
           id: Date.now(),
           name,
           price,
-          quantity: 1,
-          seller: item.seller || item.vendor || '',
+          quantity,
+          seller,
           category: item.category || '',
         },
       ]
     })
-    addNotification(`${name} added to cart`)
+    addNotification(
+      quantity > 1
+        ? `${name} (×${quantity}) added to cart`
+        : `${name} added to cart`,
+    )
     setShowCartPanel(true)
   }
 
   function updateCartQuantity(itemId, quantity) {
-    const nextQuantity = Math.max(1, Math.min(10, quantity))
+    const nextQuantity = Math.floor(Number(quantity))
+
+    if (nextQuantity < 1) {
+      setCart((current) => current.filter((item) => item.id !== itemId))
+      return
+    }
+
     setCart((current) =>
       current.map((item) =>
-        item.id === itemId ? { ...item, quantity: nextQuantity } : item,
+        item.id === itemId ? { ...item, quantity: Math.min(10, nextQuantity) } : item,
       ),
     )
   }
@@ -477,6 +532,19 @@ function AppShell() {
                 markAllMessagesRead={markAllMessagesRead}
                 deleteMessage={deleteMessage}
                 clearInbox={clearInbox}
+              />
+            )}
+          />
+          <Route
+            path="/notifications"
+            element={(
+              <NotificationsPage
+                t={t}
+                notifications={notifications}
+                markNotificationRead={markNotificationRead}
+                markAllNotificationsRead={markAllNotificationsRead}
+                deleteNotification={deleteNotification}
+                clearNotifications={clearNotifications}
               />
             )}
           />
