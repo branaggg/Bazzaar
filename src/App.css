@@ -1263,21 +1263,8 @@ h1 {
 }
 
 .seller-listing-card {
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr) auto;
   align-items: start;
-}
-
-.seller-card-preview {
-  align-items: center;
-  background: linear-gradient(135deg, #fda4af, #fed7aa);
-  border-radius: 16px;
-  color: #fff;
-  display: inline-flex;
-  font-size: 1.7rem;
-  font-weight: 900;
-  height: 56px;
-  justify-content: center;
-  min-width: 56px;
 }
 
 .seller-card-details {
