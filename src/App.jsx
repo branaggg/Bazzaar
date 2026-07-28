@@ -13,6 +13,8 @@ import SellerProfilePage from './SellerProfilePage.jsx'
 import ChatPage from './ChatPage.jsx'
 import LoginPage from './LoginPage.jsx'
 import SignupPage from './SignupPage.jsx'
+import AddUserPage from './AddUserPage.jsx'
+import FriendsPage from './FriendsPage.jsx'
 import SettingsPage from './SettingsPage.jsx'
 import CartPage from './CartPage.jsx'
 import CheckoutPage from './CheckoutPage.jsx'
@@ -36,7 +38,12 @@ function AccountFab({ user, cart, messages, notifications, logout, t, showCartPa
     .join('')
 
   const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0)
-  const unreadMessages = messages.filter((message) => !message.read).length
+  const visibleMessages = user
+    ? messages.filter((message) => message.from === user.name || message.to === user.name)
+    : []
+  const unreadMessages = visibleMessages.filter(
+    (message) => message.to === user?.name && !message.read,
+  ).length
   const unreadNotifications = notifications.filter((notification) => !notification.read).length
 
   useEffect(() => {
@@ -218,8 +225,11 @@ function AccountFab({ user, cart, messages, notifications, logout, t, showCartPa
                 <span>{user.rating} {t('rating')}</span>
                 <span>{user.verified ? t('Verified seller') : t('New member')}</span>
               </div>
-              <button type="button" onClick={openSettings}>
+              <button type="button" onClick={() => { setMenuOpen(false); setActivePanel(null); navigate('/settings') }}>
                 {t('Settings')}
+              </button>
+              <button type="button" onClick={() => { setMenuOpen(false); setActivePanel(null); navigate('/friends') }}>
+                {t('Friends')}
               </button>
               <button type="button" className="reset-button" onClick={logout}>
                 {t('Log out')}
@@ -256,15 +266,17 @@ function AccountFab({ user, cart, messages, notifications, logout, t, showCartPa
 
           {activePanel === 'inbox' && (
             <>
-              <strong>{t('Inbox')} ({messages.length})</strong>
-              {messages.length === 0 ? (
+              <strong>{t('Inbox')} ({visibleMessages.length})</strong>
+              {visibleMessages.length === 0 ? (
                 <p>{t('No messages yet')}</p>
               ) : (
                 <>
-                  {messages.slice(0, 3).map((message) => (
-                    <p key={message.id}><strong>{message.from}:</strong> {message.text}</p>
+                  {visibleMessages.slice(0, 3).map((message) => (
+                    <p key={message.id}>
+                      <strong>{message.from === user.name ? message.to : message.from}:</strong> {message.text}
+                    </p>
                   ))}
-                  {messages.length > 3 && <p>+{messages.length - 3} {t('more')}</p>}
+                  {visibleMessages.length > 3 && <p>+{visibleMessages.length - 3} {t('more')}</p>}
                 </>
               )}
               <button type="button" onClick={openInbox}>{t('Open inbox')}</button>
@@ -499,6 +511,7 @@ function AppShell() {
           <Route path="/login" element={<LoginPage t={t} />} />
           <Route path="/signup" element={<SignupPage t={t} />} />
           <Route path="/settings" element={<SettingsPage t={t} />} />
+          <Route path="/friends" element={<FriendsPage t={t} />} />
           <Route
             path="/cart"
             element={(
@@ -527,6 +540,7 @@ function AppShell() {
             element={(
               <InboxPage
                 t={t}
+                user={user}
                 messages={messages}
                 addMessage={addMessage}
                 markThreadRead={markThreadRead}
@@ -558,6 +572,7 @@ function AppShell() {
           <Route path="/seller/:name" element={<SellerProfilePage t={t} addMessage={addMessage} addNotification={addNotification} addToCart={addToCart} />} />
           <Route path="/services" element={<ServicesPage t={t} addMessage={addMessage} addNotification={addNotification} />} />
           <Route path="/chat" element={<ChatPage t={t} addNotification={addNotification} />} />
+          <Route path="/add-user" element={<AddUserPage t={t} />} />
         </Routes>
       </main>
     </div>
