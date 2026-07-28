@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import './App.css'
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx'
@@ -19,7 +19,7 @@ import InboxPage from './InboxPage.jsx'
 import { BellIcon, CartIcon, MailIcon, SettingsIcon } from './OrbitIcons.jsx'
 import { languages, makeTranslator } from './translations.js'
 
-function AccountFab({ user, cart, messages, notifications, logout, t }) {
+function AccountFab({ user, cart, messages, notifications, logout, t, showCartPanel, onCartShown }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activePanel, setActivePanel] = useState(null)
   const [spinning, setSpinning] = useState(false)
@@ -79,6 +79,25 @@ function AccountFab({ user, cart, messages, notifications, logout, t }) {
   function openPanel(panel) {
     setActivePanel((current) => (current === panel ? null : panel))
   }
+
+  useEffect(() => {
+    if (!showCartPanel) {
+      return undefined
+    }
+
+    setMenuOpen(true)
+    setActivePanel('cart')
+
+    const timer = window.setTimeout(() => {
+      setMenuOpen(false)
+      setActivePanel(null)
+      onCartShown?.()
+    }, 3000)
+
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [showCartPanel, onCartShown])
 
   function openSettings() {
     setMenuOpen(false)
@@ -270,6 +289,7 @@ function AppShell() {
   const [messages, setMessages] = useState([])
   const [notifications, setNotifications] = useState([])
   const [marketItems, setMarketItems] = useState(tradeItems)
+  const [showCartPanel, setShowCartPanel] = useState(false)
   const t = useMemo(() => makeTranslator(language), [language])
   const isLanding = location.pathname === '/'
 
@@ -345,6 +365,7 @@ function AppShell() {
       ]
     })
     addNotification(`${name} added to cart`)
+    setShowCartPanel(true)
   }
 
   function updateCartQuantity(itemId, quantity) {
@@ -411,6 +432,8 @@ function AppShell() {
           notifications={notifications}
           logout={logout}
           t={t}
+          showCartPanel={showCartPanel}
+          onCartShown={() => setShowCartPanel(false)}
         />
       )}
 
