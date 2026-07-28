@@ -132,7 +132,12 @@ export default function FoodPage({ t, addToCart, addNotification }) {
         {filteredItems.length > 0 ? (
           <div className="food-card-grid bazaar-grid">
             {filteredItems.map((item) => (
-              <article key={item.id} className="market-food-card">
+              <article key={item.id} className="market-food-card is-clickable">
+                <Link
+                  to={`/food/${item.id}`}
+                  className="card-stretch-link"
+                  aria-label={`${t('View Details')}: ${t(item.title)}`}
+                />
                 <div className="food-image">
                   {item.image ? <img src={item.image} alt={item.title} /> : item.title.slice(0, 1)}
                 </div>
@@ -151,7 +156,7 @@ export default function FoodPage({ t, addToCart, addNotification }) {
                   <span>{item.distance} mi</span>
                   <span>{t(item.ready)}</span>
                 </div>
-                <div className="food-actions food-actions-stack">
+                <div className="food-actions food-actions-stack card-actions">
                   <AddToCartControls
                     t={t}
                     requireAuth={requireAuth}
@@ -165,7 +170,6 @@ export default function FoodPage({ t, addToCart, addNotification }) {
                       quantity,
                     })}
                   />
-                  <Link to={`/food/${item.id}`} className="detail-link">{t('View Details')}</Link>
                 </div>
               </article>
             ))}

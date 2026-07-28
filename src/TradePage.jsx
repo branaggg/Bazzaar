@@ -336,8 +336,15 @@ export default function TradePage({ t, marketItems, addToCart, addMessage, addNo
       {filteredItems.length > 0 ? (
         <div className="product-grid">
           {filteredItems.map((item) => (
-            <article key={item.id} className="product-card">
-              <div className="product-image">{item.name.slice(0, 1)}</div>
+            <article key={item.id} className="product-card is-clickable">
+              <Link
+                to={`/trade/${item.id}`}
+                className="card-stretch-link"
+                aria-label={`${t('View Details')}: ${t(item.name)}`}
+              />
+              <div className="product-image">
+                {item.image ? <img src={item.image} alt={item.name} /> : item.name.slice(0, 1)}
+              </div>
               <div className="product-body">
                 <div className="product-heading">
                   <h2>{t(item.name)}</h2>
@@ -352,22 +359,19 @@ export default function TradePage({ t, marketItems, addToCart, addMessage, addNo
                 </p>
                 <p>{t('Location')}: {t(item.location)}</p>
                 <p className="trust-badge">{t(item.badge)}</p>
-                <div className="product-actions product-actions-stack">
+                <div className="product-actions product-actions-stack card-actions">
                   <AddToCartControls
                     t={t}
                     requireAuth={requireAuth}
                     onAdd={(quantity) => addToCart?.({ ...item, quantity })}
                   />
-                  <div className="product-actions-secondary">
-                    <button
-                      type="button"
-                      className="trade-button"
-                      onClick={() => requireAuth(() => setTradeTarget(item))}
-                    >
-                      {t('Offer Trade')}
-                    </button>
-                    <Link to={`/trade/${item.id}`} className="detail-link">{t('View Details')}</Link>
-                  </div>
+                  <button
+                    type="button"
+                    className="trade-button"
+                    onClick={() => requireAuth(() => setTradeTarget(item))}
+                  >
+                    {t('Offer Trade')}
+                  </button>
                 </div>
               </div>
             </article>

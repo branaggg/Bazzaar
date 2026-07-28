@@ -669,6 +669,31 @@ h1 {
   overflow: hidden;
 }
 
+.product-card.is-clickable,
+.market-food-card.is-clickable {
+  position: relative;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.product-card.is-clickable:hover,
+.market-food-card.is-clickable:hover {
+  border-color: rgba(190, 18, 60, 0.28);
+  box-shadow: 0 22px 48px rgba(120, 53, 15, 0.14);
+  transform: translateY(-2px);
+}
+
+.card-stretch-link {
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.card-actions {
+  position: relative;
+  z-index: 2;
+}
+
 .product-image {
   align-items: center;
   background: linear-gradient(135deg, #fda4af, #fed7aa);
@@ -678,6 +703,13 @@ h1 {
   font-weight: 900;
   height: 180px;
   justify-content: center;
+  overflow: hidden;
+}
+
+.product-image img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 .product-body {

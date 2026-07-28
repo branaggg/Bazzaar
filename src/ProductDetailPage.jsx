@@ -5,10 +5,11 @@ import AddToCartControls from './AddToCartControls.jsx'
 import { foodItems } from './FoodPage.jsx'
 import { tradeItems } from './TradePage.jsx'
 
-export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
+export function TradeDetailPage({ t, marketItems, addToCart, addMessage, addNotification }) {
   const { id } = useParams()
   const requireAuth = useRequireAuth()
-  const item = tradeItems.find((product) => product.id === Number(id))
+  const items = marketItems?.length ? marketItems : tradeItems
+  const item = items.find((product) => String(product.id) === String(id))
 
   if (!item) return <MissingProduct t={t} backTo="/trade" />
 
@@ -20,12 +21,16 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
     addNotification?.(`Trade offer started with ${item.seller}`)
   }
 
+  const description = item.description
+    || `${item.style} ${item.category} for ${String(item.occasion || '').toLowerCase()} wear. Listed in ${String(item.condition || '').toLowerCase()} condition with local pickup options in ${item.location}.`
+
   return (
     <ProductShell
       t={t}
       backTo="/trade"
       backLabel="Back to Marketplace"
       imageText={item.name.slice(0, 1)}
+      imageUrl={item.image}
       eyebrow={item.category}
       title={item.name}
       price={item.price}
@@ -33,7 +38,7 @@ export function TradeDetailPage({ t, addToCart, addMessage, addNotification }) {
       seller={item.seller}
       rating={item.rating}
       badge={item.badge}
-      description={`${item.style} ${item.category} for ${item.occasion.toLowerCase()} wear. Listed in ${item.condition.toLowerCase()} condition with local pickup options in ${item.location}.`}
+      description={description}
       details={[
         ['Condition', item.condition],
         ['Style', item.style],

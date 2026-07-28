@@ -550,7 +550,7 @@ function AppShell() {
             )}
           />
           <Route path="/trade" element={<TradePage t={t} marketItems={marketItems} addToCart={addToCart} addMessage={addMessage} addNotification={addNotification} />} />
-          <Route path="/trade/:id" element={<TradeDetailPage t={t} addToCart={addToCart} addMessage={addMessage} addNotification={addNotification} />} />
+          <Route path="/trade/:id" element={<TradeDetailPage t={t} marketItems={marketItems} addToCart={addToCart} addMessage={addMessage} addNotification={addNotification} />} />
           <Route path="/add-listing" element={<AddListingPage t={t} setMarketItems={setMarketItems} addNotification={addNotification} />} />
           <Route path="/food" element={<FoodPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
           <Route path="/food/:id" element={<FoodDetailPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
