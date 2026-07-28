@@ -9,6 +9,7 @@ import FoodPage from './FoodPage.jsx'
 import ServicesPage from './ServicesPage.jsx'
 import { FoodDetailPage, TradeDetailPage } from './ProductDetailPage.jsx'
 import RecipesPage from './RecipesPage.jsx'
+import SellerProfilePage from './SellerProfilePage.jsx'
 import ChatPage from './ChatPage.jsx'
 import LoginPage from './LoginPage.jsx'
 import SignupPage from './SignupPage.jsx'
@@ -554,6 +555,7 @@ function AppShell() {
           <Route path="/food" element={<FoodPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
           <Route path="/food/:id" element={<FoodDetailPage t={t} addToCart={addToCart} addNotification={addNotification} />} />
           <Route path="/food/recipes" element={<RecipesPage t={t} />} />
+          <Route path="/seller/:name" element={<SellerProfilePage t={t} addMessage={addMessage} addNotification={addNotification} addToCart={addToCart} />} />
           <Route path="/services" element={<ServicesPage t={t} addMessage={addMessage} addNotification={addNotification} />} />
           <Route path="/chat" element={<ChatPage t={t} addNotification={addNotification} />} />
         </Routes>

@@ -139,7 +139,11 @@ export default function FoodPage({ t, addToCart, addNotification }) {
                 <div>
                   <p className="food-chip">{t(item.category)}</p>
                   <h2>{t(item.title)}</h2>
-                  <p>{item.vendor}</p>
+                  <p>
+                    <Link to={`/seller/${encodeURIComponent(item.vendor)}`} className="seller-link">
+                      {item.vendor}
+                    </Link>
+                  </p>
                 </div>
                 <div className="food-details">
                   <span>${item.price}</span>

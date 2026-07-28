@@ -159,7 +159,11 @@ function ProductShell({ t, backTo, backLabel, imageText, imageUrl, eyebrow, titl
           <div className="seller-panel">
             <div>
               <p className="eyebrow">{t(sellerLabel)}</p>
-              <h2>{seller}</h2>
+              <h2>
+                <Link to={`/seller/${encodeURIComponent(seller)}`} className="seller-link">
+                  {seller}
+                </Link>
+              </h2>
             </div>
             <span>{rating} {t('rating')}</span>
             <strong>{t(badge)}</strong>

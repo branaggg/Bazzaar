@@ -347,7 +347,9 @@ export default function TradePage({ t, marketItems, addToCart, addMessage, addNo
                 <p>{t('Occasion')}: {t(item.occasion)}</p>
                 <p>{t('Size')}: {t(item.size)}</p>
                 <p>{t('Condition')}: {t(item.condition)}</p>
-                <p>{t('Seller')}: {item.seller} | {item.rating} rating</p>
+                <p>
+                  {t('Seller')}: <Link to={`/seller/${encodeURIComponent(item.seller)}`} className="seller-link">{item.seller}</Link> | {item.rating} {t('rating')}
+                </p>
                 <p>{t('Location')}: {t(item.location)}</p>
                 <p className="trust-badge">{t(item.badge)}</p>
                 <div className="product-actions product-actions-stack">

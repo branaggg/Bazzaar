@@ -1115,6 +1115,191 @@ h1 {
   gap: 1rem;
 }
 
+.seller-profile-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.seller-profile-hero {
+  align-items: start;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+  padding: 1.5rem;
+}
+
+.seller-meta {
+  color: #9a3412;
+  font-size: 0.95rem;
+  margin: 0.5rem 0 0;
+}
+
+.seller-contact-panel {
+  align-items: start;
+  background: #fff;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.seller-contact-panel > div {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.seller-contact-panel p {
+  color: #9a3412;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.seller-contact-panel strong,
+.seller-contact-panel span {
+  color: #44403c;
+  display: block;
+}
+
+.seller-summary-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.seller-summary-card {
+  background: #fff;
+  border: 1px solid rgba(120, 53, 15, 0.12);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.seller-summary-card p {
+  color: #78716c;
+  font-size: 0.88rem;
+  margin: 0 0 0.5rem;
+}
+
+.seller-summary-card strong {
+  color: #be123c;
+  font-size: 1.65rem;
+  font-weight: 900;
+}
+
+.seller-listings {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.seller-card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.seller-card {
+  background: #fff;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.seller-listing-card {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.seller-card-preview {
+  align-items: center;
+  background: linear-gradient(135deg, #fda4af, #fed7aa);
+  border-radius: 16px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 1.7rem;
+  font-weight: 900;
+  height: 56px;
+  justify-content: center;
+  min-width: 56px;
+}
+
+.seller-card-details {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.seller-card-details h3 {
+  margin: 0;
+}
+
+.seller-listing-meta {
+  color: #6b2113;
+  font-size: 0.94rem;
+  margin: 0;
+}
+
+.seller-card-summary {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: end;
+  text-align: right;
+}
+
+.seller-card-price {
+  color: #be123c;
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.seller-card-badge {
+  background: #f5f5f4;
+  border-radius: 999px;
+  color: #44403c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.35rem 0.65rem;
+}
+
+.seller-card-actions {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.seller-card-actions .detail-link {
+  align-self: center;
+  color: #be123c;
+  font-weight: 700;
+}
+
+.seller-listings-header {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.seller-listings-header p {
+  color: #57534e;
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .detail-layout,
+  .seller-profile-hero,
+  .seller-summary-grid,
+  .seller-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .back-link {
   color: #9f1239;
   font-weight: 900;
@@ -1213,6 +1398,16 @@ h1 {
 .seller-panel h2,
 .seller-panel p {
   margin-bottom: 0;
+}
+
+.seller-link {
+  color: #be123c;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.seller-link:hover {
+  text-decoration: underline;
 }
 
 .seller-panel span,
