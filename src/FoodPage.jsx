@@ -2,15 +2,17 @@ import { Link } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { useRequireAuth } from './auth/useRequireAuth.js'
 
+const foodImageUrl = 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=900&q=80'
+
 export const foodItems = [
-  { id: 1, title: 'Homemade Mango Pickle', vendor: "Aunty's Kitchen", category: 'Pickles', diet: 'Vegetarian', method: 'Pickup', price: 12, rating: 4.9, distance: 1.8, ready: 'Today' },
-  { id: 2, title: 'Premium Saffron Threads', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegetarian', method: 'Shipping', price: 30, rating: 4.8, distance: 6.4, ready: 'Ships Tomorrow' },
-  { id: 3, title: 'Fresh Mathri Box', vendor: 'Delhi Delights', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 15, rating: 4.7, distance: 3.2, ready: 'Today' },
-  { id: 4, title: 'Idli Batter Family Pack', vendor: 'Lakshmi Foods', category: 'Meal Prep', diet: 'Vegan', method: 'Pickup', price: 10, rating: 4.9, distance: 2.4, ready: 'Tomorrow' },
-  { id: 5, title: 'Gulab Jamun Party Tray', vendor: 'Mithai Corner', category: 'Sweets', diet: 'Vegetarian', method: 'Delivery', price: 28, rating: 4.6, distance: 4.5, ready: 'Today' },
-  { id: 6, title: 'Hyderabadi Biryani Box', vendor: 'Deccan Table', category: 'Meals', diet: 'Non-Vegetarian', method: 'Delivery', price: 18, rating: 4.8, distance: 5.1, ready: 'Today' },
-  { id: 7, title: 'Chai Masala Blend', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegan', method: 'Shipping', price: 9, rating: 4.7, distance: 6.4, ready: 'Ships Tomorrow' },
-  { id: 8, title: 'Mini Samosa Platter', vendor: 'Punjabi Bites', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 22, rating: 4.5, distance: 2.9, ready: 'Today' },
+  { id: 1, title: 'Homemade Mango Pickle', vendor: "Aunty's Kitchen", category: 'Pickles', diet: 'Vegetarian', method: 'Pickup', price: 12, rating: 4.9, distance: 1.8, ready: 'Today', image: foodImageUrl },
+  { id: 2, title: 'Premium Saffron Threads', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegetarian', method: 'Shipping', price: 30, rating: 4.8, distance: 6.4, ready: 'Ships Tomorrow', image: foodImageUrl },
+  { id: 3, title: 'Fresh Mathri Box', vendor: 'Delhi Delights', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 15, rating: 4.7, distance: 3.2, ready: 'Today', image: foodImageUrl },
+  { id: 4, title: 'Idli Batter Family Pack', vendor: 'Lakshmi Foods', category: 'Meal Prep', diet: 'Vegan', method: 'Pickup', price: 10, rating: 4.9, distance: 2.4, ready: 'Tomorrow', image: foodImageUrl },
+  { id: 5, title: 'Gulab Jamun Party Tray', vendor: 'Mithai Corner', category: 'Sweets', diet: 'Vegetarian', method: 'Delivery', price: 28, rating: 4.6, distance: 4.5, ready: 'Today', image: foodImageUrl },
+  { id: 6, title: 'Hyderabadi Biryani Box', vendor: 'Deccan Table', category: 'Meals', diet: 'Non-Vegetarian', method: 'Delivery', price: 18, rating: 4.8, distance: 5.1, ready: 'Today', image: foodImageUrl },
+  { id: 7, title: 'Chai Masala Blend', vendor: 'SpiceRoute', category: 'Spices', diet: 'Vegan', method: 'Shipping', price: 9, rating: 4.7, distance: 6.4, ready: 'Ships Tomorrow', image: foodImageUrl },
+  { id: 8, title: 'Mini Samosa Platter', vendor: 'Punjabi Bites', category: 'Snacks', diet: 'Vegetarian', method: 'Pickup', price: 22, rating: 4.5, distance: 2.9, ready: 'Today', image: foodImageUrl },
 ]
 
 const categories = ['All Categories', 'Meals', 'Snacks', 'Sweets', 'Spices', 'Pickles', 'Meal Prep']
@@ -141,7 +143,9 @@ export default function FoodPage({ t, addToCart, addNotification }) {
           <div className="food-card-grid bazaar-grid">
             {filteredItems.map((item) => (
               <article key={item.id} className="market-food-card">
-                <div className="food-image">{item.title.slice(0, 1)}</div>
+                <div className="food-image">
+                  {item.image ? <img src={item.image} alt={item.title} /> : item.title.slice(0, 1)}
+                </div>
                 <div>
                   <p className="food-chip">{t(item.category)}</p>
                   <h2>{t(item.title)}</h2>

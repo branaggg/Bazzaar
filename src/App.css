@@ -1478,16 +1478,13 @@ h1 {
   font-weight: 900;
   height: 120px;
   justify-content: center;
+  overflow: hidden;
 }
 
-.recipes-page {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.recipe-grid {
-  display: grid;
-  gap: 1rem;
+.food-image img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 

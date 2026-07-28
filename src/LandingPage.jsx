@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from './auth/AuthContext.jsx'
+import { clothingHeroImage } from './sharedImages.js'
 import './LandingPage.css'
 
 export default function LandingPage({ t }) {
@@ -10,8 +11,8 @@ export default function LandingPage({ t }) {
       <section className="lp-hero">
         <div className="lp-hero-media" aria-hidden="true">
           <img
-            src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=2000&q=80"
-            alt=""
+            src={clothingHeroImage}
+            alt="Saree with Samantha Ruth Prabhu"
           />
         </div>
 

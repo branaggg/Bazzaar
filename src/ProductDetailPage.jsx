@@ -75,6 +75,7 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
       backTo="/food"
       backLabel="Back to Food Bazaar"
       imageText={item.title.slice(0, 1)}
+      imageUrl={item.image}
       eyebrow={item.category}
       title={item.title}
       price={item.price}
@@ -99,7 +100,7 @@ export function FoodDetailPage({ t, addToCart, addNotification }) {
   )
 }
 
-function ProductShell({ t, backTo, backLabel, imageText, eyebrow, title, price, sellerLabel, seller, rating, badge, description, details, ctas }) {
+function ProductShell({ t, backTo, backLabel, imageText, imageUrl, eyebrow, title, price, sellerLabel, seller, rating, badge, description, details, ctas }) {
   const [ratingInput, setRatingInput] = useState(0)
   const [reviewText, setReviewText] = useState('')
   const [reviews, setReviews] = useState([])
@@ -126,12 +127,18 @@ function ProductShell({ t, backTo, backLabel, imageText, eyebrow, title, price, 
       <div className="detail-layout">
         <div className="detail-gallery">
           <div className="detail-photo">
-            <span>{imageText}</span>
+            {imageUrl ? <img src={imageUrl} alt={title} /> : <span>{imageText}</span>}
           </div>
           <div className="detail-thumbnails" aria-label="Product photos">
-            <div>{imageText}</div>
-            <div>{imageText}</div>
-            <div>{imageText}</div>
+            {imageUrl ? (
+              [0, 1, 2].map((index) => (
+                <div key={index}>
+                  <img src={imageUrl} alt={`${title} ${index + 1}`} />
+                </div>
+              ))
+            ) : (
+              [1, 2, 3].map((index) => <div key={index}>{imageText}</div>)
+            )}
           </div>
         </div>
 
